@@ -1,0 +1,9 @@
+{
+    "name": "synapse-ai",
+    "version": "1.0.0",
+    "description": "An AI-powered creative business assistant.",
+    "scripts": {
+      "start": "python app.py"
+    }
+  }
+  
