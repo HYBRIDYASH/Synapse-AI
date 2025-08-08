@@ -10,15 +10,9 @@ call_summaries = []
 def process_call_summary(query, call_id):
     """
     This function simulates processing a call and generating a summary.
-    In a real-world scenario, this would involve audio transcription and summarization.
-    For our MVP, we'll use our AI logic to create a sample summary.
     """
-    # Use our AI model to "summarize" the call.
-    summary_prompt = f"The following is a transcript of a customer call: '{query}'. Based on this, please provide a brief summary of the customer's needs, their contact details if available, and whether they are a high-priority lead. Format the response cleanly."
+    summary = get_ai_response(query)
     
-    summary = get_ai_response(summary_prompt)
-    
-    # Store the summary with a unique ID for our dashboard
     new_summary = {
         "id": call_id,
         "query": query,
@@ -28,7 +22,6 @@ def process_call_summary(query, call_id):
     }
     call_summaries.append(new_summary)
     
-    # Return a success message and a notification to the UI
     return f"Call {call_id} processed. Summary saved.", f"New call summary available for Call {call_id}!"
 
 def approve_action(call_id):
@@ -52,12 +45,10 @@ def decline_action(call_id):
 def get_dashboard_data():
     """
     Generates the dashboard content dynamically.
-    The Gradio output will update automatically with this function.
     """
     if not call_summaries:
         return "No call summaries to display yet.", ""
     
-    # Create the HTML for our dashboard display
     html_output = "<div style='font-family: sans-serif;'>"
     for summary in call_summaries:
         status_color = "orange" if summary['status'] == "Pending Approval" else "green" if summary['status'] == "Approved" else "red"
@@ -102,7 +93,6 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         dashboard_data = gr.HTML(label="Call Summaries & Status")
         refresh_btn = gr.Button("Refresh Dashboard")
 
-    # Connect UI components to our Python functions
     submit_btn.click(fn=process_call_summary, inputs=[call_input, call_id_input], outputs=[call_status_output, dashboard_notification])
     
     approve_btn.click(fn=approve_action, inputs=approval_id_input, outputs=action_output).then(fn=get_dashboard_data, outputs=[dashboard_notification, dashboard_data])
@@ -111,5 +101,4 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     
     refresh_btn.click(fn=get_dashboard_data, outputs=[dashboard_notification, dashboard_data])
 
-# Mount the Gradio app to FastAPI for Vercel deployment
 app = gr.mount_gradio_app(FastAPI(), demo, path="/")
