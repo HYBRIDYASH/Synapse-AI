@@ -1,5 +1,6 @@
 import gradio as gr
-from core__logic import get_ai_response 
+from core__logic import get_ai_response
+from fastapi import FastAPI
 import random
 import time
 
@@ -110,4 +111,5 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     
     refresh_btn.click(fn=get_dashboard_data, outputs=[dashboard_notification, dashboard_data])
 
-demo.launch()
+# We'll use this to create the Vercel-compatible app
+app = gr.mount_gradio_app(FastAPI(), demo, path="/")
