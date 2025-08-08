@@ -1,5 +1,5 @@
 import gradio as gr
-from core_logic import get_ai_response 
+from core__logic import get_ai_response
 from fastapi import FastAPI
 import random
 import time
